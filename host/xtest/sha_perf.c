@@ -83,6 +83,11 @@ static void open_ta(void)
 	check_res(res,"TEEC_OpenSession", &err_origin);
 }
 
+static void close_ta(void)
+{
+       TEEC_CloseSession(&sess);
+}
+
 /*
  * Statistics
  *
@@ -367,6 +372,7 @@ extern void sha_perf_run_test(int algo, size_t size, unsigned int n,
 		mb_per_sec(size, stats.m + 2 * sd),
 		mb_per_sec(size, stats.m - 2 * sd));
 	free_shm();
+	close_ta();
 }
 
 static void usage(const char *progname,

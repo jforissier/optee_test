@@ -141,6 +141,11 @@ static void open_ta(void)
 	check_res(res, "TEEC_OpenSession", &err_origin);
 }
 
+static void close_ta(void)
+{
+	TEEC_CloseSession(&sess);
+}
+
 /*
  * Statistics
  *
@@ -547,6 +552,7 @@ void aes_perf_run_test(int mode, int keysize, int decrypt, size_t size,
 		mb_per_sec(size, stats.m + 2 * sd),
 		mb_per_sec(size, stats.m - 2 * sd));
 	free_shm(in_place);
+	close_ta();
 }
 
 #define NEXT_ARG(i) \
