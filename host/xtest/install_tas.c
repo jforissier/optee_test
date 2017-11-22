@@ -18,6 +18,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <tee_client_api.h>
+#include "xtest_test.h"
 #include "install_tas.h"
 
 static void *read_ta(const char *dname, const char *fname, size_t *size)
@@ -77,7 +78,7 @@ int install_tas_runner_cmd_parser(int argc __unused, char *argv[] __unused)
 	TEEC_UUID uuid = PTA_MANAGEMENT_UUID;
 	TEEC_Context ctx;
 	TEEC_Session sess;
-	const char *ta_dir = "/lib/optee_armtz";
+	const char *ta_dir = TA_DIR;
 	DIR *dirp;
 
 	res = TEEC_InitializeContext(NULL, &ctx);

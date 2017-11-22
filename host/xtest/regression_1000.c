@@ -450,22 +450,6 @@ static void xtest_tee_test_1007(ADBG_Case_t *c)
 	TEEC_CloseSession(&session);
 }
 
-#ifndef TA_DIR
-# ifdef __ANDROID__
-#define TA_DIR "/system/lib/optee_armtz"
-# else
-#define TA_DIR "/lib/optee_armtz"
-# endif
-#endif
-
-#ifndef TA_TEST_DIR
-# ifdef __ANDROID__
-#  define TA_TEST_DIR "/data/tee/optee_armtz"
-# else
-#  define TA_TEST_DIR "/tmp/optee_armtz"
-# endif
-#endif
-
 static void make_test_ta_dir(void)
 {
 #ifdef __ANDROID__

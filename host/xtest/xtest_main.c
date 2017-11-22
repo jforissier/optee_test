@@ -66,7 +66,7 @@ void usage(char *program)
 	printf("applets:\n");
 	printf("\t--sha-perf [opts]  SHA performance testing tool (-h for usage)\n");
 	printf("\t--aes-perf [opts]  AES performance testing tool (-h for usage)\n");
-	printf("\t--install-tas [opts] Install TAs (-h for usage)\n");
+	printf("\t--install-tas      Install TAs\n");
 #ifdef CFG_SECURE_DATA_PATH
 	printf("\t--sdp-basic [opts] Basic Secure Data Path test setup ('-h' for usage)\n");
 #endif
