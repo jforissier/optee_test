@@ -461,7 +461,7 @@ static FILE *open_ta_file(const TEEC_UUID *uuid, const char *mode)
 	char buf[PATH_MAX];
 
 	snprintf(buf, sizeof(buf),
-		"%s/%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x.bsta",
+		"%s/%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x.ta",
 		TA_DIR, uuid->timeLow, uuid->timeMid, uuid->timeHiAndVersion,
 		uuid->clockSeqAndNode[0], uuid->clockSeqAndNode[1],
 		uuid->clockSeqAndNode[2], uuid->clockSeqAndNode[3],
