@@ -103,7 +103,7 @@ int install_tas_runner_cmd_parser(int argc __unused, char *argv[] __unused)
 		if (!dent)
 			break;
 
-		if (fnmatch("*.bsta", dent->d_name, 0))
+		if (fnmatch("*.ta", dent->d_name, 0))
 			continue;
 
 		printf("Installing \"%s\"\n", dent->d_name);
