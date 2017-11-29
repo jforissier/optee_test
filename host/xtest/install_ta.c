@@ -5,21 +5,24 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <dirent.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <fnmatch.h>
 #include <compiler.h>
-#include <inttypes.h>
+#include <dirent.h>
 #include <err.h>
+#include <errno.h>
+#include <fnmatch.h>
+#include <inttypes.h>
 #include <pta_management.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <tee_client_api.h>
+#include <unistd.h>
 #include "xtest_test.h"
-#include "install_tas.h"
+#include "install_ta.h"
 
 static void *read_ta(const char *dname, const char *fname, size_t *size)
 {
@@ -28,7 +31,10 @@ static void *read_ta(const char *dname, const char *fname, size_t *size)
 	void *buf;
 	size_t s;
 
-	snprintf(nbuf, sizeof(nbuf), "%s/%s", dname, fname);
+	if (dname)
+		snprintf(nbuf, sizeof(nbuf), "%s/%s", dname, fname);
+	else
+		snprintf(nbuf, sizeof(nbuf), "%s", fname);
 
 	f = fopen(nbuf, "rb");
 	if (!f)
@@ -71,15 +77,50 @@ static void install_ta(TEEC_Session *sess, void *buf, size_t blen)
 		errx(1, "install_ta: TEEC_InvokeCommand: %#" PRIx32 " err_origin %#" PRIx32, res, err_origin);
 }
 
-int install_tas_runner_cmd_parser(int argc __unused, char *argv[] __unused)
+static void install_file(TEEC_Session *sess, const char *dirname,
+			 const char *filename)
+{
+	void *ta;
+	size_t ta_size;
+
+	printf("Installing \"%s\"\n", filename);
+	ta = read_ta(dirname, filename, &ta_size);
+	install_ta(sess, ta, ta_size);
+	free(ta);
+}
+
+static void install_dir(TEEC_Session *sess, const char *dirname)
+{
+	DIR *dirp;
+
+	printf("Searching directory \"%s\" for TAs\n", dirname);
+	dirp = opendir(dirname);
+	if (!dirp)
+		err(1, "opendir(\"%s\")", dirname);
+
+	while (true) {
+		struct dirent *dent = readdir(dirp);
+
+		if (!dent)
+			break;
+
+		if (fnmatch("*.ta", dent->d_name, 0))
+			continue;
+
+		install_file(sess, dirname, dent->d_name);
+	}
+
+	closedir(dirp);
+}
+
+int install_ta_runner_cmd_parser(int argc, char *argv[])
 {
 	TEEC_Result res;
 	uint32_t err_origin;
 	TEEC_UUID uuid = PTA_MANAGEMENT_UUID;
 	TEEC_Context ctx;
 	TEEC_Session sess;
-	const char *ta_dir = TA_DIR;
-	DIR *dirp;
+	int i;
 
 	res = TEEC_InitializeContext(NULL, &ctx);
 	if (res)
@@ -91,24 +132,21 @@ int install_tas_runner_cmd_parser(int argc __unused, char *argv[] __unused)
 		errx(1, "TEEC_OpenSession: res %#" PRIx32 " err_orig %#" PRIx32,
 			res, err_origin);
 
-	printf("Searching for bootstrap TAs in \"%s\"\n", ta_dir);
-	dirp = opendir(ta_dir);
-	if (!dirp)
-		err(1, "opendir(\"%s\")", ta_dir);
-	while (true) {
-		struct dirent *dent = readdir(dirp);
-		void *ta;
-		size_t ta_size;
+	for (i = 1; i < argc; i++) {
+		struct stat sb;
 
-		if (!dent)
-			break;
-
-		if (fnmatch("*.ta", dent->d_name, 0))
+		if (stat(argv[i], &sb)) {
+			printf("Skipping \"%s\": %s", argv[i], strerror(errno));
 			continue;
+		}
 
-		printf("Installing \"%s\"\n", dent->d_name);
-		ta = read_ta(ta_dir, dent->d_name, &ta_size);
-		install_ta(&sess, ta, ta_size);
+		if (S_ISDIR(sb.st_mode))
+			install_dir(&sess, argv[i]);
+		else if (S_ISREG(sb.st_mode))
+			install_file(&sess, NULL, argv[i]);
+		else
+			printf("Skipping unknown file type \"%s\", mode 0%o",
+			       argv[i], sb.st_mode);
 	}
 
 	TEEC_CloseSession(&sess);

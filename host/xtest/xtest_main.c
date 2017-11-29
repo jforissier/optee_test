@@ -26,7 +26,7 @@
 
 /* include here shandalone tests */
 #include "crypto_common.h"
-#include "install_tas.h"
+#include "install_ta.h"
 
 
 ADBG_SUITE_DEFINE(benchmark);
@@ -66,7 +66,8 @@ void usage(char *program)
 	printf("applets:\n");
 	printf("\t--sha-perf [opts]  SHA performance testing tool (-h for usage)\n");
 	printf("\t--aes-perf [opts]  AES performance testing tool (-h for usage)\n");
-	printf("\t--install-tas      Install TAs\n");
+	printf("\t--install-ta [directory or list of TAs]\n");
+	printf("\t                   Install TAs\n");
 #ifdef CFG_SECURE_DATA_PATH
 	printf("\t--sdp-basic [opts] Basic Secure Data Path test setup ('-h' for usage)\n");
 #endif
@@ -97,8 +98,8 @@ int main(int argc, char *argv[])
 		return sha_perf_runner_cmd_parser(argc-1, &argv[1]);
 	else if (argc > 1 && !strcmp(argv[1], "--aes-perf"))
 		return aes_perf_runner_cmd_parser(argc-1, &argv[1]);
-	else if (argc > 1 && !strcmp(argv[1], "--install-tas"))
-		return install_tas_runner_cmd_parser(argc - 1, argv + 1);
+	else if (argc > 1 && !strcmp(argv[1], "--install-ta"))
+		return install_ta_runner_cmd_parser(argc - 1, argv + 1);
 #ifdef CFG_SECURE_DATA_PATH
 	else if (argc > 1 && !strcmp(argv[1], "--sdp-basic"))
 		return sdp_basic_runner_cmd_parser(argc-1, &argv[1]);
