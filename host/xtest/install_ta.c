@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <fnmatch.h>
 #include <inttypes.h>
-#include <pta_management.h>
+#include <pta_secstor_ta_mgmt.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -69,11 +69,9 @@ static void install_ta(TEEC_Session *sess, void *buf, size_t blen)
 	op.params[0].tmpref.buffer = buf;
 	op.params[0].tmpref.size = blen;
 
-	res = TEEC_InvokeCommand(sess, PTA_MANAGEMENT_BOOTSTRAP, &op,
+	res = TEEC_InvokeCommand(sess, PTA_SECSTOR_TA_MGMT_BOOTSTRAP, &op,
 				 &err_origin);
-	if (res == PTA_MANAGEMENT_TA_EXISTS)
-		printf("TA is already installed\n");
-	else if (res)
+	if (res)
 		errx(1, "install_ta: TEEC_InvokeCommand: %#" PRIx32 " err_origin %#" PRIx32, res, err_origin);
 }
 
@@ -117,7 +115,7 @@ int install_ta_runner_cmd_parser(int argc, char *argv[])
 {
 	TEEC_Result res;
 	uint32_t err_origin;
-	TEEC_UUID uuid = PTA_MANAGEMENT_UUID;
+	TEEC_UUID uuid = PTA_SECSTOR_TA_MGMT_UUID;
 	TEEC_Context ctx;
 	TEEC_Session sess;
 	int i;
