@@ -32,7 +32,7 @@
 #include <ta_sims_test.h>
 #include <ta_concurrent.h>
 #include <sdp_basic.h>
-#include <pta_management.h>
+#include <pta_secstor_ta_mgmt.h>
 
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -475,7 +475,7 @@ static bool load_corrupt_ta(ADBG_Case_t *c, size_t offs, uint8_t mask)
 {
 	TEEC_Session session = { 0 };
 	TEEC_Operation op = TEEC_OPERATION_INITIALIZER;
-	TEEC_UUID uuid = PTA_MANAGEMENT_UUID;
+	TEEC_UUID uuid = PTA_SECSTOR_TA_MGMT_UUID;
 	TEEC_Result res;
 	uint32_t ret_orig;
 	FILE *f = NULL;
@@ -514,7 +514,7 @@ static bool load_corrupt_ta(ADBG_Case_t *c, size_t offs, uint8_t mask)
 	op.params[0].tmpref.buffer = buf;
 	op.params[0].tmpref.size = sz;
 
-	res = TEEC_InvokeCommand(&session, PTA_MANAGEMENT_BOOTSTRAP, &op,
+	res = TEEC_InvokeCommand(&session, PTA_SECSTOR_TA_MGMT_BOOTSTRAP, &op,
 				 &ret_orig);
 	r = ADBG_EXPECT_TEEC_RESULT(c, TEEC_ERROR_SECURITY, res);
 out:
