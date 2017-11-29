@@ -72,7 +72,8 @@ static void install_ta(TEEC_Session *sess, void *buf, size_t blen)
 	res = TEEC_InvokeCommand(sess, PTA_SECSTOR_TA_MGMT_BOOTSTRAP, &op,
 				 &err_origin);
 	if (res)
-		errx(1, "install_ta: TEEC_InvokeCommand: %#" PRIx32 " err_origin %#" PRIx32, res, err_origin);
+		errx(1, "install_ta: TEEC_InvokeCommand: %#" PRIx32
+			" err_origin %#" PRIx32, res, err_origin);
 }
 
 static void install_file(TEEC_Session *sess, const char *dirname,
