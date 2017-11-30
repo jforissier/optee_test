@@ -48,6 +48,7 @@ srcs +=	adbg/src/adbg_case.c \
 	regression_8000.c \
 	sha_perf.c \
 	install_ta.c \
+	uninstall_ta.c \
 	xtest_helpers.c \
 	xtest_main.c \
 	xtest_test.c
