@@ -100,6 +100,9 @@ objs 	:= $(patsubst %.c,$(out-dir)/xtest/%.o, $(srcs))
 ifeq ($(CFG_PKCS11_TA),y)
 CFLAGS += -DCFG_PKCS11_TA
 endif
+ifeq ($(CFG_CRYPTO_RSASSA_NA1),y)
+CFLAGS += -DCFG_CRYPTO_RSASSA_NA1
+endif
 CFLAGS += -I./
 CFLAGS += -I./adbg/include
 CFLAGS += -I../supp_plugin/include
